@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        
         Schema::create('pro_procesos', function (Blueprint $table) {
             $table->id();
             $table->string('PRO_NOMBRE')->unique();
             $table->string('PRO_PREFIJO');
-            $table->timestamps();
+       
         });
     }
 
