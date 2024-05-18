@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DocumentModel extends Model
+class DocDocument extends Model
 {
     protected $table = 'DOC_DOCUMENTO';
 
@@ -27,5 +26,4 @@ class DocumentModel extends Model
     {
         return $this->belongsTo(ProProceso::class, 'DOC_ID_PROCESO');
     }
-
 }
