@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\ProProceso;
  
 
 class ProcesosSeed extends Seeder
@@ -13,7 +13,7 @@ class ProcesosSeed extends Seeder
      */
     public function run(): void
     {
-        DB::table('pro_procesos')->insert([
+        $procesos=[
             [
                 'PRO_ID'=>1,
                 'PRO_NOMBRE'=>'Ingeneria',
@@ -41,6 +41,10 @@ class ProcesosSeed extends Seeder
             ],
 
 
-        ]);
+        ];
+
+        foreach($procesos as $proceso){
+            ProProceso::create($proceso);
+        }
     }
 }
