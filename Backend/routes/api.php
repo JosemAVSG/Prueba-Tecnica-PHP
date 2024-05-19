@@ -15,7 +15,7 @@ Route::get('/document/{id}', [App\Http\Controllers\DocumentController::class, 'g
 
 Route::post('/document', [App\Http\Controllers\DocumentController::class, 'createDocument']);
 
-Route::put('/document/{id}', [App\Http\Controllers\DocumentController::class, 'updateDocument']);
+Route::put('/documents/{id}', [App\Http\Controllers\DocumentController::class, 'updateDocument']);
 
 Route::delete('/document/{id}', [App\Http\Controllers\DocumentController::class, 'deleteDocument']);
 

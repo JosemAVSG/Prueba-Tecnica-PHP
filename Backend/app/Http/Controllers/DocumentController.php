@@ -55,8 +55,38 @@ class DocumentController extends Controller
 
     public function updateDocument(Request $request, $id)
     {
+       
         $document = DocDocument::find($id);
-        $document->update($request->all());
+
+        $nombre= $request->input('nombre');
+        $contenido= $request->input('contenido');
+        $tipoDocumentoId = $request->input('tipo_documento_id');
+        $procesoId = $request->input('proceso_id');
+
+        $tipoDocumento = TipoDocumento::find($tipoDocumentoId);
+        $proceso = ProProceso::find($procesoId);
+
+        $prefijoCodigo = $tipoDocumento->TIP_PREFIJO . "-" . $proceso->PRO_PREFIJO;
+        echo $prefijoCodigo;
+        $totalDocumentos = DocDocument::where('DOC_CODIGO', 'like', $prefijoCodigo . '-%')
+            ->count();
+        if ($totalDocumentos > 0) {
+
+            $nuevoConsecutivo = $totalDocumentos + 1;
+        } else {
+
+            $nuevoConsecutivo = 1;
+        }
+
+        $codigoDocumento = $prefijoCodigo . "-" . $nuevoConsecutivo;
+
+
+        $document->DOC_Nombre = $nombre;
+        $document->DOC_CODIGO = $codigoDocumento;
+        $document->DOC_CONTENIDO = $contenido;
+        $document->DOC_ID_TIPO = $tipoDocumento->id;
+        $document->DOC_ID_PROCESO = $proceso->id;
+        $document->update();
         return response()->json($document, 200);
     }
 
@@ -70,7 +100,7 @@ class DocumentController extends Controller
     {
         $document = DocDocument::find($id);
         $document->delete();
-        return response()->json('Eliminado correctamente', 204);
+        return response()->json( 'Documento Eliminado' , 204);
     }
 
 }
