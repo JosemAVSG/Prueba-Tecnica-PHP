@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+
 class AuthController extends Controller
 {
     //
@@ -19,9 +21,13 @@ class AuthController extends Controller
        
         $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-          // User authenticated successfully
-          return response()->json(['message' => 'Login successful'], 200);
+        $remember = $request->has('remember');
+
+        if (Auth::attempt($credentials, $remember)) {
+ 
+          Session::regenerate();
+   
+          return response()->json(['message' => 'Login successful'], 200 );
         } else {
           // Invalid credentials
           return response()->json(['message' => 'Invalid login credentials'], 401);
@@ -40,11 +46,19 @@ class AuthController extends Controller
         
           $user = User::create($validatedData);
         
-          // Optionally: Log the user in after registration
-          // Auth::login($user); // Uncomment if desired
-        
+          Auth::login($user); 
+          $request->session()->regenerate();
           return response()->json(['message' => 'User registered successfully'], 201);
     }
 
+    public function logout( )
+    {
+        Auth::logout();
+        
+        Session::invalidate();
+        Session::regenerateToken();
+
+        return response()->json(['message' => 'User logged out successfully'], 200);
+    }
 
 }

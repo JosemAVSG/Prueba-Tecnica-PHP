@@ -1,12 +1,12 @@
 <?php 
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Response;
 // Auth Routes
 Route::post('/register', [App\Http\Controllers\AuthController::class, 'register'] );
 
 Route::post('/login',[App\Http\Controllers\AuthController::class, 'login']);
+
+Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout']);
 
 // Document Routes
 Route::get('/documents', [App\Http\Controllers\DocumentController::class, 'index']);
