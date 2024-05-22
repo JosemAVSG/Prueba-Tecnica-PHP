@@ -1,9 +1,20 @@
 import { Link } from "react-router-dom";
 import { Formik } from "formik";
 import { loginUser } from "../redux/slices/authSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 const Login = () => {
   const dispatch = useDispatch();
+const authenticated = useSelector(state => state.auth.authenticated);
+const navigation = useNavigate();
+
+  useEffect(() => {
+    if (authenticated) {
+      navigation("/dashboard");
+    }
+  }, [authenticated]);
+
 
   return (
     <div>
@@ -42,11 +53,11 @@ const Login = () => {
                   <form onSubmit={handleSubmit}>
                     {/* Email input */}
                     <div className="relative mb-6">
-                      <label htmlFor="password">Email address</label>
+                      <label htmlFor="email">Email address</label>
                       <input
                         type="text"
                         className="peer block min-h-[auto] w-full text-black rounded border-0 bg-blue-300 px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-black data-[twe-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-white dark:placeholder:text-neutral-300 dark:autofill:shadow-autofill dark:peer-focus:text-primary [&:not([data-twe-input-placeholder-active])]:placeholder:opacity-0"
-                        id="password"
+                        id="email"
                         placeholder="Email address"
                         name="email"
                         onChange={handleChange}

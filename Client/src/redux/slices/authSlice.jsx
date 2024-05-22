@@ -13,11 +13,11 @@ const authslice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        loginstate: (state, action) => {
+        loginstate: (state) => {
           return{
             ...state,
-            user: action.payload.user,
-            token: action.payload.token,
+            // user: action.payload.user,
+            // token: action.payload.token,
             authenticated: true,
           }
         },
@@ -25,7 +25,6 @@ const authslice = createSlice({
             return {
                 ...state,
                 user: null,
-                token: null,
                 authenticated: false,
             }
         },
@@ -64,7 +63,10 @@ export const loginUser = (userData) => {
     return async (dispatch) => {
       try {
         const res = await login(userData);
+        console.log(res.data);
+        if (res.data.message ==='Login successful') {
         dispatch(loginstate(res.data));
+        }
       } catch (error) {
         dispatch(loginFail(error));
       }

@@ -3,62 +3,70 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class AuthController extends Controller
 {
-    //
+  //
 
-    public function login(Request $request, Response $response)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-       
-        $credentials = $request->only('email', 'password');
+  public function login(Request $request)
+  {
+    $validator = Validator::make($request->all(), [
+      'email' => 'required|email',
+      'password' => 'required',
+    ]);
 
-        $remember = $request->has('remember');
-
-        if (Auth::attempt($credentials, $remember)) {
- 
-          Session::regenerate();
-   
-          return response()->json(['message' => 'Login successful'], 200 );
-        } else {
-          // Invalid credentials
-          return response()->json(['message' => 'Invalid login credentials'], 401);
-        }
+    if ($validator->fails()) {
+      return response()->json(['message' => $validator->errors()], 400);
     }
 
-    public function register(Request $request)
-    {
-      
+    $credentials = $request->only('email', 'password');
 
-        $validatedData = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users', // Ensure unique email
-            'password' => 'required',
-          ]);
-        
-          $user = User::create($validatedData);
-        
-          Auth::login($user); 
-          $request->session()->regenerate();
-          return response()->json(['message' => 'User registered successfully'], 201);
+
+
+    if (Auth::attempt($credentials)) {
+
+      $user = User::where('email', $request->email)->firstOrFail();
+
+      $token = $user->createToken('auth_token')->plainTextToken;
+
+      return response()->json(['data' => $user, 'access_token' => $token, 'token_type' => 'Bearer'], 200);
+    } else {
+      // Invalid credentials
+      return response()->json(['message' => 'Invalid login credentials'], 401);
+    }
+  }
+
+  public function register(Request $request)
+  {
+
+    $validator = Validator::make($request->all(), [
+      'name' => 'required|string|max:255',
+      'email' => 'required|email|unique:users', // Ensure unique email
+      'password' => 'required|string|min:6',
+    ]);
+
+    if ($validator->fails()) {
+      return response()->json(['message' => $validator->errors()], 400);
     }
 
-    public function logout( )
-    {
-        Auth::logout();
-        
-        Session::invalidate();
-        Session::regenerateToken();
+    $user = User::create([
+      'name' => $request->name,
+      'email' => $request->email,
+      'password' => Hash::make($request->password),
+    ]);
+    $token = $user->createToken('auth_token')->plainTextToken;
+    return response()->json(['data' => $user, 'access_token' => $token, 'token_type' => 'Bearer'], 201);
+  }
 
-        return response()->json(['message' => 'User logged out successfully'], 200);
-    }
+  public function logout()
+  {
+    auth()->user()->tokens()->delete();
+  
 
+    return response()->json(['message' => 'User logged out successfully'], 200);
+  }
 }
