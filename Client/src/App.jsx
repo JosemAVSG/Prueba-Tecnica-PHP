@@ -4,11 +4,13 @@ import Home from "./views/Home";
 import Login from "./views/Login";
 import Register from "./views/Register";
 import Dashboard from "./views/Dashboard";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <>
       <Router>
+        <Navbar></Navbar>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

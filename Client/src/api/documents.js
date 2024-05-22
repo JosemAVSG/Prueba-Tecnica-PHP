@@ -14,3 +14,7 @@ export const getDocument = (id) => {
 export const deleteDocument = (id) => {
     return instance.delete(`/documents/${id}`);
 }
+
+export const updateDocument = (id, data) => {
+    return instance.put(`/documents/${id}`, data);
+}
