@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { login, register } from "../../api/auth";
+import { login, logout, register } from "../../api/auth";
 
 const initialState = {
     user: null,
@@ -13,17 +13,25 @@ const authslice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        loginstate: (state) => {
+        loadingstate: (state) => {
+            return {
+                ...state,
+                loading: true,
+            };
+        },
+        loginstate: (state , action) => {
           return{
             ...state,
-            // user: action.payload.user,
-            // token: action.payload.token,
+            user: action.payload.data,
+            token: action.payload.access_token,
             authenticated: true,
           }
         },
         logoutstate: (state) => {
             return {
                 ...state,
+                token: null,
+                loading: false,
                 user: null,
                 authenticated: false,
             }
@@ -49,9 +57,12 @@ const authslice = createSlice({
 export const registerUser = (userData )=> {
     return async (dispatch) => {
       try {
+        dispatch(loadingstate());
         const res = await register(userData);
 
         dispatch(loginstate(res.data));
+        window.localStorage.setItem("token", res.data.access_token);
+        window.localStorage.setItem("user", JSON.stringify(res.data.data));
       } catch (error) {
         dispatch(registerFail(error ));
       }
@@ -62,15 +73,33 @@ export const registerUser = (userData )=> {
 export const loginUser = (userData) => {
     return async (dispatch) => {
       try {
+        dispatch(loadingstate());
         const res = await login(userData);
-        console.log(res.data);
-        if (res.data.message ==='Login successful') {
+      
         dispatch(loginstate(res.data));
+        window.localStorage.setItem("token", res.data.access_token);
+        window.localStorage.setItem("user", JSON.stringify(res.data.data));
+        
+      } catch (error) {
+        dispatch(loginFail(error));
+      }
+    };
+  };
+export const logoutUser = () => {
+    return async (dispatch) => {
+      try {
+        dispatch(loadingstate());
+        const res = await logout();
+        console.log(res.data);
+        if (res.data) {
+        dispatch(logoutstate());
+        
         }
       } catch (error) {
         dispatch(loginFail(error));
       }
     };
   };
-export const { loginstate, logoutstate, registerFail, loginFail } = authslice.actions;
+
+export const { loginstate, logoutstate, registerFail, loginFail, loadingstate } = authslice.actions;
 export default authslice.reducer

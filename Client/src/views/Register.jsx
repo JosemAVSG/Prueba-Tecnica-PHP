@@ -1,6 +1,21 @@
+import { Formik } from "formik";
+import { useDispatch, useSelector } from "react-redux";
+import {  useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { registerUser } from "../redux/slices/authSlice";
 const Register = () => {
+  const dispatch = useDispatch();
+  const navigation = useNavigate(); 
+  const loading = useSelector(state => state.auth.loading);
+  const authenticated = useSelector(state => state.auth.authenticated);
+  useEffect(() => {
+    if (authenticated) {
+      navigation("/dashboard");
+    }
+  }, [authenticated]);
   return (
     <div>
+      { loading && <div className="text-center text-blue-500 font-bold text-2xl animate-pulse ease-in-out">Loading...</div> }
       <section className="h-screen">
         <div className="h-full px-6 py-24 bg-gradient-to-r from-blue-200 via-blue-300 to-blue-400">
           <div className="flex h-full flex-wrap items-center justify-center lg:justify-between ">
@@ -14,18 +29,52 @@ const Register = () => {
             </div>
             {/* Right column container with form */}
             <div className="md:w-8/12 lg:ms-6 lg:w-5/12 bg-blue-200 py-10 px-10 rounded-xl  ">
-              <form>
+              <Formik
+                initialValues={{ name: "", email: "", password: "" }}
+                validate={(values) => {
+                  const errors = {};
+                  if (!values.name) {
+                    errors.name = "Required";
+                  } else if (values.name.length < 4) {
+                    errors.name = "Must be 4 characters or more";
+                  }
+                  if (!values.email) {  
+                    errors.email = "Required";
+                  } else if ( 
+                    !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+                  ) {
+                    errors.email = "Invalid email address";
+                  } 
+                  if (!values.password) {
+                    errors.password = "Required";
+                  } else if (values.password.length < 8) {
+                    errors.password = "Must be 8 characters or more";
+                  }
+                  return errors;
+                }}
+                onSubmit={(values) => {
+                  dispatch(registerUser(values));
+                }}
+              >
+
+                {( { errors, touched, values, handleChange, handleBlur, handleSubmit, }) => (
+
+
+              <form onSubmit={handleSubmit}>
                 {/* Username input */}
                 <div className="relative mb-6" data-twe-input-wrapper-init="">
-                  <label htmlFor="username">Username</label>
+                  <label htmlFor="name">Username</label>
                   <input
                     type="text"
                     className="peer block min-h-[auto] w-full rounded border-0 bg-blue-300 px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-black data-[twe-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-white dark:placeholder:text-neutral-300 dark:autofill:shadow-autofill dark:peer-focus:text-primary [&:not([data-twe-input-placeholder-active])]:placeholder:opacity-0"
-                    id="username"
-                    placeholder="Username"
+                    id="name"
+                    placeholder="Name"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.name}
                   />
-                </div>
-
+                </div>  
+                {errors.name && touched.name && <p className="text-red-500">{errors.name}</p>}
                 {/* Email input */}
                 <div className="relative mb-6" data-twe-input-wrapper-init="">
                   <label htmlFor="email">Email address</label>
@@ -34,8 +83,12 @@ const Register = () => {
                     className="peer block min-h-[auto] w-full text-black rounded border-0 bg-blue-300 px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-black data-[twe-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-white dark:placeholder:text-neutral-300 dark:autofill:shadow-autofill dark:peer-focus:text-primary [&:not([data-twe-input-placeholder-active])]:placeholder:opacity-0"
                     id="email"
                     placeholder="Email address"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.email}
                   />
                 </div>
+                {errors.email && touched.email && <p className="text-red-500">{errors.email}</p>}
                 {/* Password input */}
                 <div className="relative mb-6" data-twe-input-wrapper-init="">
                   <label htmlFor="password">Password</label>
@@ -44,8 +97,12 @@ const Register = () => {
                     className="peer block min-h-[auto] w-full rounded border-0 bg-blue-300 px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-black data-[twe-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-white dark:placeholder:text-neutral-300 dark:autofill:shadow-autofill dark:peer-focus:text-primary [&:not([data-twe-input-placeholder-active])]:placeholder:opacity-0"
                     id="password"
                     placeholder="Password"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.password}
                   />
                 </div>
+                {errors.password && touched.password && <p className="text-red-500">{errors.password}</p>}
                 <div className="mb-6 flex items-center justify-between">
                   <div className="mb-[0.125rem] block min-h-[1.5rem] ps-[1.5rem]">
                     <input
@@ -80,6 +137,10 @@ const Register = () => {
                   Register
                 </button>
               </form>
+
+                )}
+
+              </Formik>
             </div>
           </div>
         </div>

@@ -4,11 +4,14 @@ import {
   createDocument,
   updateDocument,
   deleteDocument,
+  // getTiposyProcesos,
 } from "../../api/documents";
 const initialState = {
   documents: [],
   loading: false,
   error: null,
+  tipoDocumento: null,
+  procesoDocument: null,
 };
 
 const documentSlice = createSlice({
@@ -22,10 +25,12 @@ const documentSlice = createSlice({
       return {
         ...state,
         loading: false,
-        documents: action.payload,
+        documents: action.payload.documents,
+        tipoDocumento: action.payload.tiposDocumentos,
+        procesoDocument: action.payload.procesos,
       };
     },
-
+   
     createDocumentSuccess: (state, action) => {
       return {
         ...state,
@@ -49,6 +54,7 @@ export const getDocumentsRequest = () => {
     dispatch(getDocumentsStart());
     try {
       const res = await getDocuments();
+        console.log(res.data)
       dispatch(getDocumentsSuccess(res.data));
     } catch (error) {
       dispatch(getDocumentsFail(error));
@@ -84,8 +90,12 @@ export const deleteDocumentRequest = (id) => {
   return async (dispatch) => {
     dispatch(getDocumentsStart());
     try {
-      const res = await deleteDocument(id);
-      dispatch(getDocumentsSuccess(res.data));
+       await deleteDocument(id);
+       const data = await getDocuments();
+        dispatch(getDocumentsSuccess(data.data));
+        
+      
+      
     } catch (error) {
       dispatch(getDocumentsFail(error));
     }
@@ -100,5 +110,6 @@ export const {
   getDocumentsSuccess,
   getDocumentsFail,
   createDocumentSuccess,
+  setTipoyProceso,
 } = documentSlice.actions;
 export default documentSlice.reducer;

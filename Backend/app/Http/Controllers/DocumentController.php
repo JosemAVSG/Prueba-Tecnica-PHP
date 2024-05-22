@@ -14,7 +14,10 @@ class DocumentController extends Controller
     {
    
         $documents = DocDocument::all();
-        return response()->json($documents);
+        $tiposDocumentos = TipoDocumento::all();
+        $procesos = ProProceso::all();
+        return response()->json(['tiposDocumentos' => $tiposDocumentos, 'procesos' => $procesos , 'documents' => $documents ], 200);
+        // return response()->json($documents);
     }
 
     public function createDocument(Request $request)

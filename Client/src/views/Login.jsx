@@ -8,7 +8,7 @@ const Login = () => {
   const dispatch = useDispatch();
 const authenticated = useSelector(state => state.auth.authenticated);
 const navigation = useNavigate();
-
+const loading = useSelector(state => state.auth.loading);
   useEffect(() => {
     if (authenticated) {
       navigation("/dashboard");
@@ -18,6 +18,8 @@ const navigation = useNavigate();
 
   return (
     <div>
+      {loading && <div className="text-center text-blue-500 font-bold text-2xl animate-pulse ease-in-out">Loading...</div>}
+      
       <section className="h-screen">
         <div className="h-full px-6 py-24 bg-gradient-to-r from-blue-200 via-blue-300 to-blue-400">
           <div className="flex h-full flex-wrap items-center justify-center lg:justify-between ">

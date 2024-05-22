@@ -5,6 +5,8 @@ import Login from "./views/Login";
 import Register from "./views/Register";
 import Dashboard from "./views/Dashboard";
 import Navbar from "./components/Navbar";
+import DocumentForm from "./components/DocumentForm";
+import EditForm from "./components/EditForm";
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/createDocument" element={<DocumentForm/>} />
+            <Route path="/editDocument/:id" element={<EditForm/>} />
           </Route>
         </Routes>
       </Router>

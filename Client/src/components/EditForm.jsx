@@ -1,13 +1,13 @@
 import { useSelector, useDispatch } from "react-redux";
-import { createDocumentRequest } from "../redux/slices/documentSlice";
+import {  updateDocumentRequest } from "../redux/slices/documentSlice";
 import {  Formik } from "formik";
-import { Link } from "react-router-dom";
-const DocumentForm = () => {
+import { Link, useParams } from "react-router-dom";
+const EditForm = () => {
   const tipoDoc = useSelector((state) => state.document.tipoDocumento);
   const proceso = useSelector((state) => state.document.procesoDocument);
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.document.loading);
-
+  const {id} = useParams();
  
   return (
     <div className="h-screen flex justify-center items-center flex-col bg-gradient-to-b from-blue-200 via-blue-300 to-blue-400">
@@ -15,8 +15,8 @@ const DocumentForm = () => {
         loading && <div className="text-center text-blue-500 font-bold text-2xl animate-pulse ease-in-out">Loading...</div>
       }
       <Link to="/dashboard" className="text-blue-500 font-bold text-2xl mb-4 flex self-start mx-10 underline" >Regresar</Link>
-      <h1 className="text-3xl font-bold mb-4">Document Form</h1>
-      <p>Formulario para crear un nuevo documento</p>
+      <h1 className="text-3xl font-bold mb-4">Document Edit Form</h1>
+      <p>Formulario para editar un documento</p>
 
       <Formik
         initialValues={{
@@ -43,7 +43,7 @@ const DocumentForm = () => {
           return errors;
         }}
         onSubmit={(values) => {
-          dispatch(createDocumentRequest(values));
+          dispatch(updateDocumentRequest(id, values));
         }}
     
       >
@@ -115,4 +115,4 @@ const DocumentForm = () => {
     </div>
   );
 };
-export default DocumentForm;
+export default EditForm;

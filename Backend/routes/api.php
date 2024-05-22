@@ -21,8 +21,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/documents/{id}', [App\Http\Controllers\DocumentController::class, 'updateDocument']);
     
     Route::delete('/document/{id}', [App\Http\Controllers\DocumentController::class, 'deleteDocument']);
-
+    
+    
 });
-
-
-?>
+// Route::get('/tipos',[App\Http\Controllers\DocumentController::class,'getTipoDocumentos']);

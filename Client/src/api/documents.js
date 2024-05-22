@@ -1,7 +1,7 @@
 import instance from "./axios";
 
 export const createDocument = (data) => {
-    return instance.post("/documents", data);
+    return instance.post("/document", data);
 }
 
 export const getDocuments = () => {
@@ -12,9 +12,10 @@ export const getDocument = (id) => {
 }
 
 export const deleteDocument = (id) => {
-    return instance.delete(`/documents/${id}`);
+    return instance.delete(`/document/${id}`);
 }
 
 export const updateDocument = (id, data) => {
     return instance.put(`/documents/${id}`, data);
 }
+
